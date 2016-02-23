@@ -12,6 +12,12 @@ module.exports = function (grunt) {
 
   grunt.initConfig({
     pkg: grunt.file.readJSON('package.json'),
+    jshint: {
+        options: {
+            node: true
+        },
+        all: [ "Gruntfile.js", "app/**/*.js", "public/js/**/*.js", "app.js" ]
+    },
     develop: {
       server: {
         file: 'app.js'
@@ -55,7 +61,7 @@ module.exports = function (grunt) {
       }
     }
   });
-
+  grunt.loadNpmTasks("grunt-contrib-jshint");
   grunt.config.requires('watch.js.files');
   files = grunt.config('watch.js.files');
   files = grunt.file.expand(files);
@@ -76,6 +82,7 @@ module.exports = function (grunt) {
 
   grunt.registerTask('default', [
     'sass',
+    'jshint',
     'develop',
     'watch'
   ]);

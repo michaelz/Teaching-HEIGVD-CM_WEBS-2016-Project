@@ -54,16 +54,12 @@ router.put('/:id', tests.testUserExistence, function (req, res, next) {
 
 // Remove user
 
-router.delete('/:id', function (req, res, next) {
-    var userId = req.params.id;
-    User.remove({
-        _id: userId
-    }, function (err, data) {
-        if (err) {
-            res.status(500).send(err);
-            return;
-        }
-        console.log('Deleted ' + data.n + ' documents');
-        res.sendStatus(204);
+router.delete('/:id', tests.testUserExistence, function (req, res, next) {
+    req.user.remove(function(err) {
+      if (err) {
+        res.status(500).send("err");
+        return;
+      }
+      res.sendStatus(204);
     });
 });

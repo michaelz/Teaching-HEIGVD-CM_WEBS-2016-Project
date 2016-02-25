@@ -77,6 +77,20 @@ router.get('/:id/comment', tests.testUserExistence, function (req, res, next) {
     });
 });
 
+
+// Get user comments
+router.get('/:id/comment', tests.testUserExistence, function (req, res, next) {
+    Comment.find({'userId' : req.user._id}, function(err, comments) {
+        if (err) {
+            res.status(500).send(err);
+            return;
+        }
+        res.send(comments);
+    });
+});
+
+
+
 // Get user actions
 
 router.get('/:id/action', tests.testUserExistence, function (req, res, next) {

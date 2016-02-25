@@ -6,7 +6,7 @@ Issue = mongoose.model('Issue'),
     IssueType = mongoose.model('IssueType');
 
 module.exports = function (app) {
-    app.use('/api/issueType', router);
+    app.use('/api/v1/issueType', router);
 };
 
 // Post issueType
@@ -48,4 +48,3 @@ router.delete('/:id', tests.testIssueTypeExistence, function (req, res, next) {
         res.sendStatus(204);
     });
 });
-

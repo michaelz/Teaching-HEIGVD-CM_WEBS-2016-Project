@@ -1,3 +1,7 @@
+var mongoose = require('mongoose');
+var User = mongoose.model('User');
+var Issue = mongoose.model('Issue');
+
 module.exports.testUserExistence = function (req, res, next) {
     User.findById(req.params.id, function (err, user) {
         if (err) {

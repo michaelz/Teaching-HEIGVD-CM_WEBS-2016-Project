@@ -89,7 +89,10 @@ router.delete('/:id', tests.testIssueExistence, function (req, res, next) {
     });
 });
 
-router.post(':/id/comment', tests.testIssueExistence, function (req, res, next) {
+
+// post a comment on an issue
+
+router.post('/:id/comment', tests.testIssueExistence, function (req, res, next) {
     var issueId = req.issue._id;
     var comment = new Comment(req.body);
     comment.issueId = issueId;

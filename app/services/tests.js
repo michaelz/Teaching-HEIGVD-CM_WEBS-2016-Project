@@ -1,5 +1,5 @@
-module.exports.testUserExistence = function(req, res, next) {
-    User.findById(req.params.id, function(err, user) {
+module.exports.testUserExistence = function (req, res, next) {
+    User.findById(req.params.id, function (err, user) {
         if (err) {
             res.status(500).send(err);
             return;

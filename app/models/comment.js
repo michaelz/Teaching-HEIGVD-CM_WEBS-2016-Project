@@ -4,10 +4,10 @@ var mongoose = require('mongoose'),
     Schema = mongoose.Schema;
 
 var CommentSchema = new Schema({
-    userId: Schema.Types.ObjectId,
-    issueId: Schema.Types.ObjectId,
-    date: Date,
-    content: String
+    userId: {type: Schema.Types.ObjectId, required: true},
+    issueId: {type: Schema.Types.ObjectId, required: true},
+    date: {type: Date, default: Date.now},
+    content: {type: String, required: true}
 });
 
 mongoose.model('Comment', CommentSchema);

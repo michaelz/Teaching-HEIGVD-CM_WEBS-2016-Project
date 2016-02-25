@@ -2,7 +2,9 @@ var express = require('express'),
     router = express.Router(),
     mongoose = require('mongoose'),
     tests = require('../services/tests')
-User = mongoose.model('User');
+
+User = mongoose.model('User'),
+Comment = mongoose.model('Comment');
 
 module.exports = function (app) {
     app.use('/api/user', router);
@@ -57,7 +59,7 @@ router.put('/:id', tests.testUserExistence, function (req, res, next) {
 router.delete('/:id', tests.testUserExistence, function (req, res, next) {
     req.user.remove(function(err) {
       if (err) {
-        res.status(500).send("err");
+        res.status(500).send(err);
         return;
       }
       res.sendStatus(204);
@@ -66,11 +68,23 @@ router.delete('/:id', tests.testUserExistence, function (req, res, next) {
 
 // Get user comments
 router.get('/:id/comment', tests.testUserExistence, function (req, res, next) {
-    res.send(["haha","hoho"]);
+    Comment.find({'userId' : req.user._id}, function(err, comments) {
+        if (err) {
+            res.status(500).send(err);
+            return;
+        }
+        res.send(comments);
+    });
 });
 
 // Get user actions
 
 router.get('/:id/action', tests.testUserExistence, function (req, res, next) {
-    res.send("blah"); // get into issues and show actions
+    Issue.find({'userId' : req.user._id}, function(err, issues) {
+        if (err) {
+            res.status(500).send(err);
+            return;
+        }
+        res.send(issues.actions);
+    });
 });

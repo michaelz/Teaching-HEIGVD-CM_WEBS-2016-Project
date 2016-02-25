@@ -75,8 +75,8 @@ router.put('/:id', tests.testIssueExistence, function (req, res, next) {
 
 // Remove issue
 
-router.delete('/:id', function (req, res, next) {
-    var issueId = req.params.id;
+router.delete('/:id', tests.testIssueExistence, function (req, res, next) {
+    var issueId = req.issue._id;
     Issue.remove({
         _id: issueId
     }, function (err, data) {
@@ -87,4 +87,18 @@ router.delete('/:id', function (req, res, next) {
         console.log('Deleted ' + data.n + ' documents');
         res.sendStatus(204);
     });
+});
+
+router.post(':/id/comment', tests.testIssueExistence, function (req, res, next) {
+    var issueId = req.issue._id;
+    var comment = new Comment(req.body);
+    comment.issueId = issueId;
+    comment.save(function (err, createdComment) {
+        if (err) {
+            res.status(500).send(err);
+            return;
+        }
+        res.status(201).send(createdComment);
+    });
+
 });

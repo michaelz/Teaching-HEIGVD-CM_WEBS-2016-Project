@@ -6,7 +6,10 @@ var mongoose = require('mongoose'),
 var IssueSchema = new Schema({
   description: {type: String, required: true},
   tags: [String],
-  coordinates : {type: [Number], length: 2 }, // TO TEST
+  location: {
+    type: { type:String, required: true, default: "Point" },
+    coordinates : [Number]
+  },
   status: {
       type: String,
       required: true,

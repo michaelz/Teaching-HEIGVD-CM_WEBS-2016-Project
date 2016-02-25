@@ -63,3 +63,14 @@ router.delete('/:id', tests.testUserExistence, function (req, res, next) {
       res.sendStatus(204);
     });
 });
+
+// Get user comments
+router.get('/:id/comment', tests.testUserExistence, function (req, res, next) {
+    res.send(["haha","hoho"]);
+});
+
+// Get user actions
+
+router.get('/:id/action', tests.testUserExistence, function (req, res, next) {
+    res.send("blah"); // get into issues and show actions
+});

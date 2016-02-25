@@ -23,6 +23,17 @@ module.exports = function (grunt) {
         file: 'app.js'
       }
     },
+    apidoc: {
+      webservexpress: {
+        src: "app/",
+        dest: "public/doc/",
+        options: {
+          debug: true,
+          includeFilters: [ ".*\\.js$" ],
+          excludeFilters: [ "node_modules/" ]
+        }
+      }
+    },
     sass: {
       dist: {
         files: {
@@ -62,6 +73,7 @@ module.exports = function (grunt) {
     }
   });
   grunt.loadNpmTasks("grunt-contrib-jshint");
+  grunt.loadNpmTasks('grunt-apidoc');
   grunt.config.requires('watch.js.files');
   files = grunt.config('watch.js.files');
   files = grunt.file.expand(files);
@@ -84,6 +96,7 @@ module.exports = function (grunt) {
     'sass',
     'jshint',
     'develop',
+    'apidoc',
     'watch'
   ]);
 };

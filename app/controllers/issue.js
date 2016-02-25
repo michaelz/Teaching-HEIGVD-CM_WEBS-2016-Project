@@ -6,7 +6,7 @@ Issue = mongoose.model('Issue'),
     Comment = mongoose.model('Comment');
 
 module.exports = function (app) {
-    app.use('/api/issue', router);
+    app.use('/api/v1/issue/', router);
 };
 
 // Post issue
@@ -22,7 +22,11 @@ router.post('/', function (req, res, next) { // path relatif à ci-dessus
     });
 });
 
-// Get issues
+/**
+ * @api {get} /issue/ Get all issues
+ * @apiVersion 1.0.0
+ * @apiName GetUser
+ */
 router.get('/', function (req, res, next) {
     Issue.find(function (err, issues) {
         if (err) {

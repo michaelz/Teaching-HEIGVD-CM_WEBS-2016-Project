@@ -1,7 +1,7 @@
 {
   "name": "webservexpress",
-  "version": "1.0",
+  "version": "1.0.0",
   "description": "apiDoc basic example",
   "title": "Custom apiDoc browser title",
-  "url" : "https://localhost:3000/v1"
+  "url" : "/api/v1"
 }

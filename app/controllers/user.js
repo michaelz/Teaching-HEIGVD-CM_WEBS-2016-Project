@@ -7,7 +7,7 @@ User = mongoose.model('User'),
 Comment = mongoose.model('Comment');
 
 module.exports = function (app) {
-    app.use('/api/user', router);
+    app.use('/api/v1/user', router);
 };
 
 // Post users

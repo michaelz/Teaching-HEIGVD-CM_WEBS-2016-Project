@@ -18,9 +18,4 @@ var IssueSchema = new Schema({
   userId: Schema.Types.ObjectId
 });
 
-IssueSchema.virtual('date')
-  .get(function(){
-    return this._id.getTimestamp();
-  });
-
 mongoose.model('Issue', IssueSchema);

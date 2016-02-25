@@ -12,7 +12,7 @@ var IssueSchema = new Schema({
       actionName: String,
       actionParam: String,
       userId: Schema.Types.ObjectId,
-      date: Date
+      date: { type: Date, default: Date.now }
   }],
   typeId: Schema.Types.ObjectId,
   userId: Schema.Types.ObjectId

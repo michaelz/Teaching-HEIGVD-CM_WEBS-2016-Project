@@ -4,8 +4,8 @@ var mongoose = require('mongoose'),
   Schema = mongoose.Schema;
 
 var UserSchema = new Schema({
-  name: String,
-  roles: [String]
+  name: {type: String, required: true},
+  roles: [{type: String, match: /(staff|admin)/}]
 });
 
 mongoose.model('User', UserSchema);

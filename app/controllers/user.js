@@ -20,7 +20,7 @@ router.post('/', function (req, res, next) { // path relatif à ci-dessus
     });
 });
 
-// Get people
+// Get all users
 router.get('/', function (req, res, next) {
     User.find(function (err, people) {
         if (err) {
@@ -37,29 +37,24 @@ router.get('/:id', tests.testUserExistence, function (req, res, next) {
 });
 
 // Update existing user
-router.put(':id', function (req, res, next) {
-    User.findById(userId, function (err, user) {
-        if (err) {
-            res.status(500).send(err);
-            return;
-        }
-        user.name = req.body.name;
-        user.age = req.body.age;
-        // faux:
-        user.save(function (err, updatedUser) {
-            if (err) {
-                res.status(500).send(err);
-                return;
-            }
-            res.send(updatedUser);
-        });
-    });
-});
+router.put('/:id', tests.testUserExistence, function (req, res, next) {
 
+    if (req.body.name) req.user.name = req.body.name;
+    if (req.body.roles) req.user.roles = req.body.roles;
+
+    req.user.save(function(err, updatedUser) {
+      if (err) {
+        res.status(500).send(err);
+        return;
+      }
+      res.send(updatedUser);
+    });
+
+});
 
 // Remove user
 
-router.delete(':id', function (req, res, next) {
+router.delete('/:id', function (req, res, next) {
     var userId = req.params.id;
     User.remove({
         _id: userId

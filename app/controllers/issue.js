@@ -1,7 +1,7 @@
 var express = require('express'),
     router = express.Router(),
     mongoose = require('mongoose'),
-    tests = require('../services/tests')
+    tests = require('../services/tests'),
 Issue = mongoose.model('Issue'),
     Comment = mongoose.model('Comment');
 

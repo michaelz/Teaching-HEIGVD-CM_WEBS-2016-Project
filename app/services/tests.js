@@ -10,7 +10,7 @@ module.exports.testUserExistence = function (req, res, next) {
         req.user = user;
         next();
     });
-}
+};
 
 module.exports.testIssueExistence = function (req, res, next) {
     Issue.findById(req.params.id, function (err, issue) {
@@ -24,4 +24,4 @@ module.exports.testIssueExistence = function (req, res, next) {
         req.issue = issue;
         next();
     });
-}
+};

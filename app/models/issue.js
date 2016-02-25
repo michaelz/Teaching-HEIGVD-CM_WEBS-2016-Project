@@ -4,18 +4,23 @@ var mongoose = require('mongoose'),
     Schema = mongoose.Schema;
 
 var IssueSchema = new Schema({
-  description: String,
+  description: {type: String, required: true},
   tags: [String],
   coordinates: [Number],
-  status: String,
+  status: {
+      type: String,
+      required: true,
+      match: /(created|acknowledged|assigned|in_progress|solved|rejected)/,
+      default: "created"
+  },
   actions: [{
-      actionName: String,
-      actionParam: String,
-      userId: Schema.Types.ObjectId,
-      date: { type: Date, default: Date.now }
+      actionName: {type: String, required: true},
+      actionParam: {type: String, required: true},
+      userId: {type: Schema.Types.ObjectId, required: true},
+      date: { type: Date, default: Date.now, required: true }
   }],
-  typeId: Schema.Types.ObjectId,
-  userId: Schema.Types.ObjectId
+  typeId: {type: Schema.Types.ObjectId, ref: 'issueType'},
+  userId: {type: Schema.Types.ObjectId, ref: 'User'}
 });
 
 mongoose.model('Issue', IssueSchema);

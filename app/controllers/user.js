@@ -42,14 +42,78 @@ router.post('/', function (req, res, next) { // path relatif à ci-dessus
  * @apiSuccess {String[]} roles Role(s) of the users
  */
 router.get('/', function (req, res, next) {
-    User.find(function (err, people) {
-        if (err) {
-            res.status(500).send(err);
-            return;
-        }
-        res.send(people);
-    });
+    var limit;
+    // defines the result limit
+    if (req.query.limit) {
+        limit = req.query.limit;
+    } else {
+        limit = 0;
+    }
+
+    if (req.query.sortby == "mostissues") {
+        countIssues(function(err, count) {
+            if (err) {
+                res.status(500).send(err);
+                return;
+            }
+            res.send(count);
+        });
+    } else if (req.query.sortby == "mostsolvedissues"){
+
+        res.send(req.query.sortby);
+    } else if (req.query.sortby == "leastassignedissues") {
+
+        res.send(req.query.sortby);
+    } else {
+        User.find(function (err, users) {
+            if (err) {
+                res.status(500).send(err);
+                return;
+            }
+            res.send(users);
+        }).limit(parseInt(limit));
+    }
+
+
+
 });
+
+/**
+ * Count issues by user
+ */
+function countIssues(callback) {
+    Issue.aggregate([
+        {
+          $group: {
+            _id: '$userId',
+            count: {
+              $sum: 1
+            }
+          }
+        }, {
+          $sort: {
+            count: -1
+          }
+        }, {
+          $skip: 0
+        }, {
+          $limit: 100
+      }]).exec(function(err,count){
+      var options = [{ path: '_id', select: 'name roles'}];
+      // "Inner join automatique"
+      User.populate(count,options,function(e,pop){
+        var newPops =[];
+        for(var i=0;i<pop.length;i++){
+          if(pop[i]._id) {
+              var newPop = JSON.parse(JSON.stringify(pop[i]._id));
+              newPop["count"] = pop[i].count;
+              newPops.push(newPop);
+          }
+        }
+        callback(e,newPops);
+      });
+    });
+}
 
 /**
  * @api {get} /user/:id Get specific user

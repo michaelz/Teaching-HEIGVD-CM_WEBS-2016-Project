@@ -53,6 +53,41 @@ router.get('/', function (req, res, next) {
         };
     }
 
+    // Filter by tags, multi-tag possible
+    if (typeof(req.query.tags) == "object" && req.query.tags.length) {
+        criteria.tags = {$in: req.query.tags};
+    } else if (req.query.tags) {
+        criteria.tags = req.query.tags;
+    }
+
+    if (typeof(req.query.status) == "object" && req.query.status.length) {
+        criteria.status = {$in: req.query.status};
+    } else if (req.query.status) {
+        criteria.status = req.query.status;
+    }
+
+    if (req.query.dateStart || req.query.dateEnd) {
+
+        if (req.query.dateStart && req.query.dateEnd) {
+            criteria.created = {
+                $gte: new Date(req.query.dateStart),
+                $lte: new Date(req.query.dateEnd)
+            }
+        }
+        if (req.query.dateStart) {
+            criteria.created = {
+                $gte: new Date(req.query.dateStart)
+            }
+        }
+
+        if (req.query.dateEnd) {
+            criteria.created = {
+                $lte: new Date(req.query.dateEnd)
+            }
+        }
+    }
+
+
     Issue.find(criteria, function (err, issues) {
         if (err) {
             res.status(500).send(err);

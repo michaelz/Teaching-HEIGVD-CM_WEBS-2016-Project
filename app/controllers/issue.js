@@ -2,7 +2,7 @@ var express = require('express'),
     router = express.Router(),
     mongoose = require('mongoose'),
     tests = require('../services/tests'),
-Issue = mongoose.model('Issue'),
+    Issue = mongoose.model('Issue'),
     Comment = mongoose.model('Comment');
 
 module.exports = function (app) {
@@ -28,7 +28,32 @@ router.post('/', function (req, res, next) { // path relatif à ci-dessus
  * @apiName GetUser
  */
 router.get('/', function (req, res, next) {
-    Issue.find(function (err, issues) {
+    var criteria = {};
+// Filter by typeId
+    if (req.query.type) {
+        criteria.typeId = req.query.type;
+    }
+
+    var latitude = req.query.latitude,
+        longitude = req.query.longitude,
+        distance = req.query.dist;
+
+    if (latitude && longitude && distance) {
+        criteria.location = {
+            $near: {
+                $geometry: {
+                    type: 'Point',
+                    coordinates: [
+                        parseFloat(longitude),
+                        parseFloat(latitude)
+                    ]
+                },
+                $maxDistance: parseInt(distance, 10)
+            }
+        };
+    }
+
+    Issue.find(criteria, function (err, issues) {
         if (err) {
             res.status(500).send(err);
             return;

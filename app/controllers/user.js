@@ -3,8 +3,9 @@ var express = require('express'),
     mongoose = require('mongoose'),
     tests = require('../services/tests'),
 
-User = mongoose.model('User'),
-Comment = mongoose.model('Comment');
+    User = mongoose.model('User'),
+    Issue = mongoose.model('Issue'),
+    Comment = mongoose.model('Comment');
 
 module.exports = function (app) {
     app.use('/api/v1/user', router);
@@ -44,12 +45,12 @@ router.put('/:id', tests.testUserExistence, function (req, res, next) {
     if (req.body.name) req.user.name = req.body.name;
     if (req.body.roles) req.user.roles = req.body.roles;
 
-    req.user.save(function(err, updatedUser) {
-      if (err) {
-        res.status(500).send(err);
-        return;
-      }
-      res.send(updatedUser);
+    req.user.save(function (err, updatedUser) {
+        if (err) {
+            res.status(500).send(err);
+            return;
+        }
+        res.send(updatedUser);
     });
 
 });
@@ -57,18 +58,18 @@ router.put('/:id', tests.testUserExistence, function (req, res, next) {
 // Remove user
 
 router.delete('/:id', tests.testUserExistence, function (req, res, next) {
-    req.user.remove(function(err) {
-      if (err) {
-        res.status(500).send(err);
-        return;
-      }
-      res.sendStatus(204);
+    req.user.remove(function (err) {
+        if (err) {
+            res.status(500).send(err);
+            return;
+        }
+        res.sendStatus(204);
     });
 });
 
 // Get user comments
 router.get('/:id/comment', tests.testUserExistence, function (req, res, next) {
-    Comment.find({'userId' : req.user._id}, function(err, comments) {
+    Comment.find({'userId': req.user._id}, function (err, comments) {
         if (err) {
             res.status(500).send(err);
             return;
@@ -78,23 +79,22 @@ router.get('/:id/comment', tests.testUserExistence, function (req, res, next) {
 });
 
 
-// Get user comments
-router.get('/:id/comment', tests.testUserExistence, function (req, res, next) {
-    Comment.find({'userId' : req.user._id}, function(err, comments) {
+// Get user issue
+router.get('/:id/issue', tests.testUserExistence, function (req, res, next) {
+    Issue.find({'userId': req.user._id}, function (err, issues) {
         if (err) {
             res.status(500).send(err);
             return;
         }
-        res.send(comments);
+        res.send(issues);
     });
 });
-
 
 
 // Get user actions
 
 router.get('/:id/action', tests.testUserExistence, function (req, res, next) {
-    Issue.find({'userId' : req.user._id}, function(err, issues) {
+    Issue.find({'userId': req.user._id}, function (err, issues) {
         if (err) {
             res.status(500).send(err);
             return;

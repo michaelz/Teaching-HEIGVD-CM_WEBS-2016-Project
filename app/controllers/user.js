@@ -72,9 +72,10 @@ router.get('/:id', tests.testUserExistence, function (req, res, next) {
  * @apiGroup User
  * @apiVersion 1.0.0
  * @apiParam {Number} id Users unique ID.
- *
- * @apiSuccess {String} name Name of the users
- * @apiSuccess {String[]} roles Role(s) of the users
+ * @apiParam {String} name  Name of the user
+ * @apiParam {String[]} roles  Role(s) of the user, can be admin or staff.
+ * @apiSuccess {String} name Name of the user
+ * @apiSuccess {String[]} roles Role(s) of the user
  */
 router.put('/:id', tests.testUserExistence, function (req, res, next) {
 
@@ -98,7 +99,7 @@ router.put('/:id', tests.testUserExistence, function (req, res, next) {
  * @apiVersion 1.0.0
  *
  * @apiParam {Number} id Users unique ID.
- * @apiSuccess 204
+ * @apiSuccess 204 No Content
  */
 
 router.delete('/:id', tests.testUserExistence, function (req, res, next) {
@@ -112,15 +113,18 @@ router.delete('/:id', tests.testUserExistence, function (req, res, next) {
 });
 
 /**
- * @api {get} / Get specific user comments
- * @apiName GetUser
+ * @api {get} /user/:id/comments Get specific user comments
+ * @apiName GetUserComments
  * @apiGroup User
  * @apiVersion 1.0.0
  *
  * @apiParam {Number} id Users unique ID.
  *
- * @apiSuccess {String} firstname Firstname of the User.
- * @apiSuccess {String} lastname  Lastname of the User.
+ * @apiSuccess {Schema.Types.ObjectId} _id Comment ID.
+ * @apiSuccess {Schema.Types.ObjectId} issueId Issue ID.
+ * @apiSuccess {Schema.Types.ObjectId} userId User ID.
+ * @apiSuccess {String} content Comment's content
+ * apiSuccess {Date} date Comment's creation date
  */
 router.get('/:id/comment', tests.testUserExistence, function (req, res, next) {
     Comment.find({'userId': req.user._id}, function (err, comments) {
@@ -137,7 +141,7 @@ router.get('/:id/comment', tests.testUserExistence, function (req, res, next) {
  * @api {get} / Get specific user issues
  * @apiName GetUser
  * @apiGroup User
- *
+ * @apiVersion 1.0.0
  * @apiParam {Number} id Users unique ID.
  *
  * @apiSuccess {String} firstname Firstname of the User.

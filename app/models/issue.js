@@ -24,7 +24,8 @@ var IssueSchema = new Schema({
         date: {type: Date, default: Date.now, required: true}
     }],
     typeId: {type: Schema.Types.ObjectId, ref: 'issueType'},
-    userId: {type: Schema.Types.ObjectId, ref: 'User'}
+    userId: {type: Schema.Types.ObjectId, ref: 'User'},
+    created: {type: Date, default: Date.now, required: true}
 });
 
 IssueSchema.index({

@@ -11,7 +11,15 @@ module.exports = function (app) {
     app.use('/api/v1/user', router);
 };
 
-// Post users
+/**
+ * @api {post} /user/ Create a new user
+ * @apiName PostUser
+ * @apiGroup User
+ *
+ * @apiVersion 1.0.0
+ * @apiParam {String} name  Name of the user
+ * @apiParam {String[]} roles  Role(s) of the user, can be admin or staff.
+ */
 router.post('/', function (req, res, next) { // path relatif à ci-dessus
     var user = new User(req.body); // le body du post
     user.save(function (err, createdUser) { // on crée la userne
@@ -23,7 +31,16 @@ router.post('/', function (req, res, next) { // path relatif à ci-dessus
     });
 });
 
-// Get all users
+/**
+ * @api {get} /user/ Get all users
+ * @apiName GetUsers
+ * @apiGroup User
+ *
+ * @apiVersion 1.0.0
+ *
+ * @apiSuccess {String} name Name of the users
+ * @apiSuccess {String[]} roles Role(s) of the users
+ */
 router.get('/', function (req, res, next) {
     User.find(function (err, people) {
         if (err) {
@@ -34,12 +51,31 @@ router.get('/', function (req, res, next) {
     });
 });
 
-// Get specific user
+/**
+ * @api {get} /user/:id Get specific user
+ * @apiName GetUser
+ * @apiGroup User
+ * @apiVersion 1.0.0
+ *
+ * @apiParam {Number} id Users unique ID.
+ *
+ * @apiSuccess {String} name Name of the users
+ * @apiSuccess {String[]} roles Role(s) of the users
+ */
 router.get('/:id', tests.testUserExistence, function (req, res, next) {
     res.send(req.user);
 });
 
-// Update existing user
+/**
+ * @api {put} /user/:id Update an user
+ * @apiName UpdateUser
+ * @apiGroup User
+ * @apiVersion 1.0.0
+ * @apiParam {Number} id Users unique ID.
+ *
+ * @apiSuccess {String} name Name of the users
+ * @apiSuccess {String[]} roles Role(s) of the users
+ */
 router.put('/:id', tests.testUserExistence, function (req, res, next) {
 
     if (req.body.name) req.user.name = req.body.name;
@@ -55,7 +91,15 @@ router.put('/:id', tests.testUserExistence, function (req, res, next) {
 
 });
 
-// Remove user
+/**
+ * @api {delete} /user/:id Remove a user
+ * @apiName GetUser
+ * @apiGroup User
+ * @apiVersion 1.0.0
+ *
+ * @apiParam {Number} id Users unique ID.
+ * @apiSuccess (204)
+ */
 
 router.delete('/:id', tests.testUserExistence, function (req, res, next) {
     req.user.remove(function (err) {
@@ -67,7 +111,17 @@ router.delete('/:id', tests.testUserExistence, function (req, res, next) {
     });
 });
 
-// Get user comments
+/**
+ * @api {get} / Get specific user comments
+ * @apiName GetUser
+ * @apiGroup User
+ * @apiVersion 1.0.0
+ *
+ * @apiParam {Number} id Users unique ID.
+ *
+ * @apiSuccess {String} firstname Firstname of the User.
+ * @apiSuccess {String} lastname  Lastname of the User.
+ */
 router.get('/:id/comment', tests.testUserExistence, function (req, res, next) {
     Comment.find({'userId': req.user._id}, function (err, comments) {
         if (err) {
@@ -79,7 +133,16 @@ router.get('/:id/comment', tests.testUserExistence, function (req, res, next) {
 });
 
 
-// Get user issue
+/**
+ * @api {get} / Get specific user issues
+ * @apiName GetUser
+ * @apiGroup User
+ *
+ * @apiParam {Number} id Users unique ID.
+ *
+ * @apiSuccess {String} firstname Firstname of the User.
+ * @apiSuccess {String} lastname  Lastname of the User.
+ */
 router.get('/:id/issue', tests.testUserExistence, function (req, res, next) {
     Issue.find({'userId': req.user._id}, function (err, issues) {
         if (err) {

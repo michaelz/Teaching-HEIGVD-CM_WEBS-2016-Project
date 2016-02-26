@@ -9,7 +9,7 @@ var IssueSchema = new Schema({
     tags: [String],
     location: {
         type: {type: String, required: true, default: "Point"},
-        coordinates: [Number]
+        coordinates: {type: [Number], required: true}
     },
     status: {
         type: String,

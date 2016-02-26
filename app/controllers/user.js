@@ -13,7 +13,7 @@ module.exports = function (app) {
 
 /**
  * @api {post} /user/ Create a new user
- * @apiName PostUser
+ * @apiName CreateUser
  * @apiGroup User
  *
  * @apiVersion 1.0.0
@@ -93,12 +93,12 @@ router.put('/:id', tests.testUserExistence, function (req, res, next) {
 
 /**
  * @api {delete} /user/:id Remove a user
- * @apiName GetUser
+ * @apiName DeleteUser
  * @apiGroup User
  * @apiVersion 1.0.0
  *
  * @apiParam {Number} id Users unique ID.
- * @apiSuccess (204)
+ * @apiSuccess 204
  */
 
 router.delete('/:id', tests.testUserExistence, function (req, res, next) {

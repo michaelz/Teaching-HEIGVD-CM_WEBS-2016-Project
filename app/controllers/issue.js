@@ -82,11 +82,14 @@ router.get('/:id/comment', tests.testIssueExistence, function (req, res, next) {
 
 // Update existing issue
 router.put('/:id', tests.testIssueExistence, function (req, res, next) {
-
+    var changed = false;
     if (req.body.description) req.issue.description = req.body.description;
     if (req.body.tags) req.issue.tags = req.body.tags;
     if (req.body.location) req.issue.location = req.body.location;
-    if (req.body.status) req.issue.status = req.body.status;
+    if (req.body.status) {
+        req.issue.status = req.body.status;
+        changed = true;
+    }
     if (req.body.typeId) req.issue.typeId = req.body.typeId;
     if (req.body.userId) req.issue.userId = req.body.userId;
 
@@ -96,7 +99,18 @@ router.put('/:id', tests.testIssueExistence, function (req, res, next) {
             res.status(500).send(err);
             return;
         }
-        res.send(updatedIssue);
+        if (changed) {
+            addAction('status update', req.issue.status, updatedIssue._id, function(err, actionedIssue) {
+                if (err) {
+                    res.status(500).send(err);
+                    return;
+                }
+                res.send(actionedIssue);
+            });
+        } else {
+            res.send(updatedIssue);
+        }
+
     });
 
 });
@@ -130,7 +144,41 @@ router.post('/:id/comment', tests.testIssueExistence, function (req, res, next) 
             res.status(500).send(err);
             return;
         }
-        res.status(201).send(createdComment);
+        addAction('comment', comment._id, issueId, function(err) {
+            if (err) {
+                res.status(500).send(err);
+                return;
+            }
+            res.status(201).send(createdComment);
+        });
     });
 
+
 });
+
+/**
+ * Add a new action asynchronously.
+ */
+function addAction(actionName, actionParam, issueId, callback) {
+    Issue.findById(issueId, function(err, issue) {
+        if (err) {
+            callback(err);
+            return;
+        }
+        var newAction = {
+            "actionName": actionName,
+            "actionParam": actionParam,
+            "userId": "56cec007c6c040020d6ab328", // temporary
+            "date": Date.now()
+        };
+
+        issue.actions.push(newAction);
+        issue.save(function (err, updatedIssue){
+            if (err) {
+                callback(err);
+                return;
+            }
+            callback(undefined, updatedIssue);
+        });
+    });
+}

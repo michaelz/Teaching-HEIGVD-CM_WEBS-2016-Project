@@ -2,7 +2,7 @@ var express = require('express'),
     router = express.Router(),
     mongoose = require('mongoose'),
     tests = require('../services/tests'),
-Issue = mongoose.model('Issue'),
+    Issue = mongoose.model('Issue'),
     IssueType = mongoose.model('IssueType');
 
 module.exports = function (app) {

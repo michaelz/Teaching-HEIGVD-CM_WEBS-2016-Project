@@ -25,7 +25,8 @@ router.post('/', function (req, res, next) { // path relatif à ci-dessus
 /**
  * @api {get} /issue/ Get all issues
  * @apiVersion 1.0.0
- * @apiName GetUser
+ * @apiName GetIssues
+ * @apiGroup Issue
  */
 router.get('/', function (req, res, next) {
     var criteria = {};
@@ -72,18 +73,18 @@ router.get('/', function (req, res, next) {
             criteria.created = {
                 $gte: new Date(req.query.dateStart),
                 $lte: new Date(req.query.dateEnd)
-            }
+            };
         }
         if (req.query.dateStart) {
             criteria.created = {
                 $gte: new Date(req.query.dateStart)
-            }
+            };
         }
 
         if (req.query.dateEnd) {
             criteria.created = {
                 $lte: new Date(req.query.dateEnd)
-            }
+            };
         }
     }
 

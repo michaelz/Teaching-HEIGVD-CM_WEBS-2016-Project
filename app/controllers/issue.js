@@ -127,9 +127,9 @@ router.get('/', function (req, res, next) {
                         return;
                     }
                     res.send(issues);
-                })
-        })
-    })
+                });
+        });
+    });
 });
 
 // Get specific issue

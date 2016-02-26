@@ -124,7 +124,7 @@ router.delete('/:id', tests.testUserExistence, function (req, res, next) {
  * @apiSuccess {Schema.Types.ObjectId} issueId Issue ID.
  * @apiSuccess {Schema.Types.ObjectId} userId User ID.
  * @apiSuccess {String} content Comment's content
- * apiSuccess {Date} date Comment's creation date
+ * @apiSuccess {Date} date Comment's creation date
  */
 router.get('/:id/comment', tests.testUserExistence, function (req, res, next) {
     Comment.find({'userId': req.user._id}, function (err, comments) {
@@ -144,8 +144,13 @@ router.get('/:id/comment', tests.testUserExistence, function (req, res, next) {
  * @apiVersion 1.0.0
  * @apiParam {Number} id Users unique ID.
  *
- * @apiSuccess {String} firstname Firstname of the User.
- * @apiSuccess {String} lastname  Lastname of the User.
+ * @apiSuccess {Schema.Types.ObjectId} _id The ID of the issue
+ * @apiSuccess {String} description A description of the issue
+ * @apiSuccess {Schema.Types.ObjectId} typeId The ID of the issue Type
+ * @apiSuccess {Schema.Types.ObjectId} userId The ID of the issue's user
+ * @apiSuccess {Date} created the creation date of the issue
+ * @apiSuccess {Action[]} actions an array of actions made on the issue
+
  */
 router.get('/:id/issue', tests.testUserExistence, function (req, res, next) {
     Issue.find({'userId': req.user._id}, function (err, issues) {
@@ -159,18 +164,20 @@ router.get('/:id/issue', tests.testUserExistence, function (req, res, next) {
 
 
 /**
- * @api {get} /user/:id/action Get specific user actions
+ * @api {get} /user/:id/action Get user actions on all issues
  * @apiName GetUserActions
  * @apiGroup User
  * @apiVersion 1.0.0
  *
- * @apiParam {Number} id Users unique ID.
+ * @apiParam {Number} id User's unique ID.
  *
- * @apiSuccess {Schema.Types.ObjectId} _id Comment ID.
- * @apiSuccess {Schema.Types.ObjectId} issueId Issue ID.
+ * @apiSuccess {String} actionName The name of the action
+ * @apiSuccess {String} actionParam A parameter for the specified action
  * @apiSuccess {Schema.Types.ObjectId} userId User ID.
+ * @apiSuccess {Date} date Comment's creation date
  * @apiSuccess {String} content Comment's content
- * apiSuccess {Date} date Comment's creation date
+ * @apiSuccess {Schema.Types.ObjectId} issueId the ID of the issue which has the action.
+
  */
 
 router.get('/:id/action', tests.testUserExistence, function (req, res, next) {
@@ -179,7 +186,7 @@ router.get('/:id/action', tests.testUserExistence, function (req, res, next) {
             res.status(500).send(err);
             return;
         }
-        var userActions = new Array();
+        var userActions = [];
         for (var i = 0; i < userIssues.length; i++) {
             for (var j = 0; j < userIssues[i].actions.length; j++) {
                 userActions[j] = userIssues[i].actions[j].toJSON(); // Serialize to be able to add element

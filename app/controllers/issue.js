@@ -29,12 +29,22 @@ router.post('/', function (req, res, next) { // path relatif à ci-dessus
  * @apiGroup Issue
  */
 router.get('/', function (req, res, next) {
+
+    // critere object
     var criteria = {};
-// Filter by typeId
+
+    //Pagination system
+    var page = req.query.page ? parseInt(req.query.page, 10) : 1,
+        pageSize = req.query.pageSize ? parseInt(req.query.pageSize, 10) : 10;
+    var offset = (page - 1) * pageSize,
+        limit = pageSize;
+
+    // Filter by typeId
     if (req.query.type) {
         criteria.typeId = req.query.type;
     }
 
+    // Filter by geo position
     var latitude = req.query.latitude,
         longitude = req.query.longitude,
         distance = req.query.dist;
@@ -54,19 +64,21 @@ router.get('/', function (req, res, next) {
         };
     }
 
-    // Filter by tags, multi-tag possible
+    // Filter by tags - Object query OK
     if (typeof(req.query.tags) == "object" && req.query.tags.length) {
         criteria.tags = {$in: req.query.tags};
     } else if (req.query.tags) {
         criteria.tags = req.query.tags;
     }
 
+    // Filter by status - Object query OK
     if (typeof(req.query.status) == "object" && req.query.status.length) {
         criteria.status = {$in: req.query.status};
     } else if (req.query.status) {
         criteria.status = req.query.status;
     }
 
+    // Filter by date
     if (req.query.dateStart || req.query.dateEnd) {
 
         if (req.query.dateStart && req.query.dateEnd) {
@@ -88,14 +100,36 @@ router.get('/', function (req, res, next) {
         }
     }
 
-
-    Issue.find(criteria, function (err, issues) {
+    // Pagination system
+    Issue.count(function (err, totalCount) {
         if (err) {
             res.status(500).send(err);
             return;
         }
-        res.send(issues);
-    });
+
+        Issue.count(criteria, function (err, filteredCount) {
+            if (err) {
+                res.status(500).send(err);
+                return;
+            }
+
+            res.set('X-Pagination-Page', page);
+            res.set('X-Pagination-Page-Size', pageSize);
+            res.set('X-Pagination-Total', totalCount);
+            res.set('X-Pagination-Filtered-Total', filteredCount);
+
+            Issue.find(criteria)
+                .skip(offset)
+                .limit(limit)
+                .exec(function (err, issues) {
+                    if (err) {
+                        res.status(500).send(err);
+                        return;
+                    }
+                    res.send(issues);
+                })
+        })
+    })
 });
 
 // Get specific issue
@@ -113,6 +147,11 @@ router.get('/:id/comment', tests.testIssueExistence, function (req, res, next) {
         }
         res.send(commentByIssue);
     });
+});
+
+// get all actions of a issue
+router.get('/:id/action', tests.testIssueExistence, function (req, res, next) {
+    res.send(req.issue.actions);
 });
 
 
@@ -136,7 +175,7 @@ router.put('/:id', tests.testIssueExistence, function (req, res, next) {
             return;
         }
         if (changed) {
-            addAction('status update', req.issue.status, updatedIssue._id, function(err, actionedIssue) {
+            addAction('status update', req.issue.status, updatedIssue._id, function (err, actionedIssue) {
                 if (err) {
                     res.status(500).send(err);
                     return;
@@ -180,7 +219,7 @@ router.post('/:id/comment', tests.testIssueExistence, function (req, res, next) 
             res.status(500).send(err);
             return;
         }
-        addAction('comment', comment._id, issueId, function(err) {
+        addAction('comment', comment._id, issueId, function (err) {
             if (err) {
                 res.status(500).send(err);
                 return;
@@ -196,7 +235,7 @@ router.post('/:id/comment', tests.testIssueExistence, function (req, res, next) 
  * Add a new action asynchronously.
  */
 function addAction(actionName, actionParam, issueId, callback) {
-    Issue.findById(issueId, function(err, issue) {
+    Issue.findById(issueId, function (err, issue) {
         if (err) {
             callback(err);
             return;
@@ -209,7 +248,7 @@ function addAction(actionName, actionParam, issueId, callback) {
         };
 
         issue.actions.push(newAction);
-        issue.save(function (err, updatedIssue){
+        issue.save(function (err, updatedIssue) {
             if (err) {
                 callback(err);
                 return;

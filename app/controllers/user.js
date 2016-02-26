@@ -113,7 +113,7 @@ router.delete('/:id', tests.testUserExistence, function (req, res, next) {
 });
 
 /**
- * @api {get} /user/:id/comments Get specific user comments
+ * @api {get} /user/:id/comment Get specific user comments
  * @apiName GetUserComments
  * @apiGroup User
  * @apiVersion 1.0.0
@@ -138,8 +138,8 @@ router.get('/:id/comment', tests.testUserExistence, function (req, res, next) {
 
 
 /**
- * @api {get} / Get specific user issues
- * @apiName GetUser
+ * @api {get} /user/:id/issue Get specific user issues
+ * @apiName GetUserIssues
  * @apiGroup User
  * @apiVersion 1.0.0
  * @apiParam {Number} id Users unique ID.
@@ -158,14 +158,35 @@ router.get('/:id/issue', tests.testUserExistence, function (req, res, next) {
 });
 
 
-// Get user actions
+/**
+ * @api {get} /user/:id/action Get specific user actions
+ * @apiName GetUserActions
+ * @apiGroup User
+ * @apiVersion 1.0.0
+ *
+ * @apiParam {Number} id Users unique ID.
+ *
+ * @apiSuccess {Schema.Types.ObjectId} _id Comment ID.
+ * @apiSuccess {Schema.Types.ObjectId} issueId Issue ID.
+ * @apiSuccess {Schema.Types.ObjectId} userId User ID.
+ * @apiSuccess {String} content Comment's content
+ * apiSuccess {Date} date Comment's creation date
+ */
 
 router.get('/:id/action', tests.testUserExistence, function (req, res, next) {
-    Issue.find({'userId': req.user._id}, function (err, issues) {
+    Issue.find({'userId': req.user._id}, function (err, userIssues) {
         if (err) {
             res.status(500).send(err);
             return;
         }
-        res.send(issues.actions);
+        var userActions = new Array();
+        for (var i = 0; i < userIssues.length; i++) {
+            for (var j = 0; j < userIssues[i].actions.length; j++) {
+                userActions[j] = userIssues[i].actions[j].toJSON(); // Serialize to be able to add element
+                // Add issue ID
+                userActions[j].issueId = userIssues[i]._id;
+            }
+        }
+        res.send(userActions);
     });
 });

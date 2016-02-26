@@ -9,7 +9,15 @@ module.exports = function (app) {
     app.use('/api/v1/issueType', router);
 };
 
-// Post issueType
+/**
+ * @api {post} /issueType/ Create a new issueType
+ * @apiName CreateIssueType
+ * @apiGroup IssueType
+ *
+ * @apiVersion 1.0.0
+ * @apiParam {String} shortName  The name of the type
+ * @apiParam {String} description  The description of the type
+ */
 router.post('/', function (req, res, next) { // path relatif à ci-dessus
     var issueType = new IssueType(req.body);
     // le body du post
@@ -22,7 +30,13 @@ router.post('/', function (req, res, next) { // path relatif à ci-dessus
     });
 });
 
-// Get issuesType
+/**
+ * @api {get} /issueType/ Get all the issueType
+ * @apiName GetIssueType
+ * @apiGroup IssueType
+ *
+ * @apiVersion 1.0.0
+ */
 router.get('/', function (req, res, next) {
     IssueType.find(function (err, issueType) {
         if (err) {
@@ -33,7 +47,14 @@ router.get('/', function (req, res, next) {
     });
 });
 
-// Remove issue
+/**
+ * @api {delete} /issueType/ Delete a new issueType
+ * @apiName RemoveIssueType
+ * @apiGroup IssueType
+ *
+ * @apiVersion 1.0.0
+ * @apiParam {Schema.Types.ObjectId} id  The ID of the type
+ */
 
 router.delete('/:id', tests.testIssueTypeExistence, function (req, res, next) {
     var issueTypeId = req.issueType._id;

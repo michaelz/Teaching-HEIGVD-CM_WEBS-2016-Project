@@ -9,7 +9,29 @@ module.exports = function (app) {
     app.use('/api/v1/issue/', router);
 };
 
-// Post issue
+/**
+ * @api {post} /issue/ Create a new issue
+ * @apiName CreateIssue
+ * @apiGroup Issue
+ *
+ * @apiVersion 1.0.0
+ * @apiParam {String} description  Description of the issue
+ * @apiParam {String[]} tags  Tags related to the issue
+ * @apiParam {Object} location  Location
+ * @apiParam {String} location.type  Type of location
+ * @apiParam {Number} location.coordinates  Coordinates of location
+ * @apiParam {Object} status  Status of the issue
+ * @apiParam {String} status.type  Type of the status of the issue
+ * @apiParam {Object[]} actions  Actions related to the issue
+ * @apiParam {String} actions.actionName  Name of the action related to the issue
+ * @apiParam {String} actions.actionParam  Param of the action related to the issue
+ * @apiParam {Schema.Types.ObjectId} actions.userId  ID of the user that made the action related to the issue
+ * @apiParam {Date} actions.date  Date of the action related to the issue
+ * @apiParam {Schema.Types.ObjectId} typeId  ID of the type of the issue
+ * @apiParam {Schema.Types.ObjectId} userId  ID of the user that create the issue
+ * @apiParam {Date} created  Date of creation ot the issue
+ *
+ */
 router.post('/', function (req, res, next) { // path relatif à ci-dessus
     var issue = new Issue(req.body);
     // le body du post
@@ -27,6 +49,17 @@ router.post('/', function (req, res, next) { // path relatif à ci-dessus
  * @apiVersion 1.0.0
  * @apiName GetIssues
  * @apiGroup Issue
+ *
+ * @apiParam {String} status
+ * @apiParam {String[]} tags
+ * @apiParam {Schema.Types.ObjectId} type The ID of the type of the issue
+ * @apiParam {Date} dateStart The start date
+ * @apiParam {Date} dateEnd The end date
+ * @apiParam {Number} page page The number of the page
+ * @apiParam {Number} pageSize The size of the page
+ * @apiParam {Float} latitude The latitude of the position
+ * @apiParam {Float} longitude The longitude of the position
+ * @apiParam {Integer} distance The distance near the position
  */
 router.get('/', function (req, res, next) {
 
@@ -132,13 +165,28 @@ router.get('/', function (req, res, next) {
     });
 });
 
-// Get specific issue
+/**
+ * @api {get} /issue/:id Get a specific issue
+ * @apiVersion 1.0.0
+ * @apiName GetIssue
+ * @apiGroup Issue
+ *
+ * @apiParam {Schema.Types.ObjectId} id The ID of the specific issue
+ */
 router.get('/:id', tests.testIssueExistence, function (req, res, next) {
     res.send(req.issue);
 });
 
 
-// shows all comments from an issue
+/**
+ * @api {get} /issue/:id/comment Get all comments from an issue
+ * @apiVersion 1.0.0
+ * @apiName GetIssueComments
+ * @apiGroup Issue
+ *
+ * @apiParam {Schema.Types.ObjectId} id The ID of the specific issue
+ */
+
 router.get('/:id/comment', tests.testIssueExistence, function (req, res, next) {
     Comment.find({"issueId": req.issue._id}, function (err, commentByIssue) {
         if (err) {
@@ -149,13 +197,29 @@ router.get('/:id/comment', tests.testIssueExistence, function (req, res, next) {
     });
 });
 
-// get all actions of a issue
+
+/**
+ * @api {get} /issue/:id/action Get all actions of a issue
+ * @apiVersion 1.0.0
+ * @apiName GetIssueActions
+ * @apiGroup Issue
+ *
+ * @apiParam {Schema.Types.ObjectId} id The ID of the specific issue
+ */
+
 router.get('/:id/action', tests.testIssueExistence, function (req, res, next) {
     res.send(req.issue.actions);
 });
 
+/**
+ * @api {put} /issue/:id Update existing issue
+ * @apiVersion 1.0.0
+ * @apiName UpdateIssue
+ * @apiGroup Issue
+ *
+ * @apiParam {Schema.Types.ObjectId} id The ID of the specific issue
+ */
 
-// Update existing issue
 router.put('/:id', tests.testIssueExistence, function (req, res, next) {
     var changed = false;
     if (req.body.description) req.issue.description = req.body.description;
@@ -185,13 +249,18 @@ router.put('/:id', tests.testIssueExistence, function (req, res, next) {
         } else {
             res.send(updatedIssue);
         }
-
     });
-
 });
 
 
-// Remove issue
+/**
+ * @api {delete} /issue/:id Remove a issue
+ * @apiVersion 1.0.0
+ * @apiName DeleteIssue
+ * @apiGroup Issue
+ *
+ * @apiParam {Schema.Types.ObjectId} id The ID of the specific issue
+ */
 
 router.delete('/:id', tests.testIssueExistence, function (req, res, next) {
     var issueId = req.issue._id;
@@ -208,7 +277,15 @@ router.delete('/:id', tests.testIssueExistence, function (req, res, next) {
 });
 
 
-// post a comment on an issue
+/**
+ * @api {post} /issue/:id/comment Post a comment on an issue
+ * @apiVersion 1.0.0
+ * @apiName CreateIssueComment
+ * @apiGroup Issue
+ *
+ * @apiParam {Schema.Types.ObjectId} id The ID of the specific issue
+ * @apiParam {String} comment The content of the comment
+ */
 
 router.post('/:id/comment', tests.testIssueExistence, function (req, res, next) {
     var issueId = req.issue._id;
@@ -232,8 +309,16 @@ router.post('/:id/comment', tests.testIssueExistence, function (req, res, next) 
 });
 
 /**
- * Add a new action asynchronously.
+ * @api {addAction} Add a action
+ * @apiVersion 1.0.0
+ * @apiName AddAction
+ * @apiGroup Issue
+ *
+ * @apiParam {String} actionName The name of the action
+ * @apiParam {String} actionParam The name of the param of the action
+ * @apiParam {Schema.Types.ObjectId} issueId The ID of issue that had a action
  */
+
 function addAction(actionName, actionParam, issueId, callback) {
     Issue.findById(issueId, function (err, issue) {
         if (err) {

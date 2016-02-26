@@ -149,7 +149,10 @@ router.get('/:id/comment', tests.testUserExistence, function (req, res, next) {
  * @apiSuccess {Schema.Types.ObjectId} typeId The ID of the issue Type
  * @apiSuccess {Schema.Types.ObjectId} userId The ID of the issue's user
  * @apiSuccess {Date} created the creation date of the issue
- * @apiSuccess {Action[]} actions an array of actions made on the issue
+ * @apiParam {Object[]} actions  Actions related to the issue
+ * @apiParam {String} actions.actionName  Name of the action related to the issue
+ * @apiParam {String} actions.actionParam  Param of the action related to the issue
+ * @apiParam {Schema.Types.ObjectId} actions.userId  The ID of the user that made the action related to the issue
 
  */
 router.get('/:id/issue', tests.testUserExistence, function (req, res, next) {

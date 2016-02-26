@@ -309,15 +309,9 @@ router.post('/:id/comment', tests.testIssueExistence, function (req, res, next) 
 });
 
 /**
- * @api {addAction} Add a action
- * @apiVersion 1.0.0
- * @apiName AddAction
- * @apiGroup Issue
- *
- * @apiParam {String} actionName The name of the action
- * @apiParam {String} actionParam The name of the param of the action
- * @apiParam {Schema.Types.ObjectId} issueId The ID of issue that had a action
+ * Fonction use to create action
  */
+
 
 function addAction(actionName, actionParam, issueId, callback) {
     Issue.findById(issueId, function (err, issue) {

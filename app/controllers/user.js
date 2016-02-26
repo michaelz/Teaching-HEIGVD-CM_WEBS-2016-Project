@@ -51,14 +51,14 @@ router.get('/', function (req, res, next) {
     }
 
     if (req.query.sortby == "mostissues") {
-        countIssues(function(err, count) {
+        countIssues(function (err, count) {
             if (err) {
                 res.status(500).send(err);
                 return;
             }
             res.send(count);
         });
-    } else if (req.query.sortby == "mostsolvedissues"){
+    } else if (req.query.sortby == "mostsolvedissues") {
 
         res.send(req.query.sortby);
     } else if (req.query.sortby == "leastassignedissues") {
@@ -75,7 +75,6 @@ router.get('/', function (req, res, next) {
     }
 
 
-
 });
 
 /**
@@ -84,34 +83,34 @@ router.get('/', function (req, res, next) {
 function countIssues(callback) {
     Issue.aggregate([
         {
-          $group: {
-            _id: '$userId',
-            count: {
-              $sum: 1
+            $group: {
+                _id: '$userId',
+                count: {
+                    $sum: 1
+                }
             }
-          }
         }, {
-          $sort: {
-            count: -1
-          }
+            $sort: {
+                count: -1
+            }
         }, {
-          $skip: 0
+            $skip: 0
         }, {
-          $limit: 100
-      }]).exec(function(err,count){
-      var options = [{ path: '_id', select: 'name roles'}];
-      // "Inner join automatique"
-      User.populate(count,options,function(e,pop){
-        var newPops =[];
-        for(var i=0;i<pop.length;i++){
-          if(pop[i]._id) {
-              var newPop = JSON.parse(JSON.stringify(pop[i]._id));
-              newPop["count"] = pop[i].count;
-              newPops.push(newPop);
-          }
-        }
-        callback(e,newPops);
-      });
+            $limit: 100
+        }]).exec(function (err, count) {
+        var options = [{path: '_id', select: 'name roles'}];
+        // "Inner join automatique"
+        User.populate(count, options, function (e, pop) {
+            var newPops = [];
+            for (var i = 0; i < pop.length; i++) {
+                if (pop[i]._id) {
+                    var newPop = JSON.parse(JSON.stringify(pop[i]._id));
+                    newPop.count = pop[i].count;
+                    newPops.push(newPop);
+                }
+            }
+            callback(e, newPops);
+        });
     });
 }
 

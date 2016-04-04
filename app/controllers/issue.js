@@ -32,13 +32,13 @@ module.exports = function (app) {
  * @apiParam {Date} created  Date of creation ot the issue
  *
  */
-router.post('/', function (req, res, next) { // path relatif à ci-dessus
+router.post('/', function (req, res, next) {
     var issue = new Issue(req.body);
     // le body du post
-    issue.save(function (err, createdIssue) { // on crée la userne
+    issue.save(function (err, createdIssue) {
         if (err) {
-            res.status(500).send(err); // pas très propre, peut donner des informations aux clients
-            return; // ne pas oublier. Arrête l'execution de la fonction. Sinon express continue et crash.
+            res.status(500).send(err);
+            return;
         }
         res.status(201).send(createdIssue);
     });
